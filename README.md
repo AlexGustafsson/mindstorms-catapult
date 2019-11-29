@@ -1,7 +1,9 @@
 # Mindstorms Catapult
 ### A very strong and robust design for a fully automatic LEGO catapult
 
-![Preview](renders/preview.gif)
+<p align="center">
+  <img alt="Preview" src="renders/preview.gif">
+</p>
 
 _Note: A high resolution version of the GIF is available in the renders directory._
 
