@@ -20,12 +20,19 @@ class Catapult:
     # Whether or not the catapult is in a safe (controlled) state
     safe = False
 
+    # The time to retract the entire span of the arm is 47 seconds for the white version, with full batteries
+    # The time to retract the entire span of the arm is 52 seconds for the black version, with full batteries
+    time_to_retract = 47
+
     # Constructor for the robot arm
-    def __init__(self, base_motor_port, linear_actuator_port):
+    def __init__(self, base_motor_port, linear_actuator_port, time_to_retract=None):
         # Initialize the base servo motor
         self.base_motor = Motor(base_motor_port, Direction.CLOCKWISE)
         # Initialize the linear actuator
         self.linear_actuator = Motor(linear_actuator_port, Direction.CLOCKWISE)
+
+        if time_to_retract is not None:
+            self.time_to_retract = time_to_retract
 
     # Reset the robot arm
     # Ensure that the splint is able to cleany enter the driving gear completely
@@ -73,11 +80,14 @@ class Catapult:
     # has full tension when the arm is rotated fully and pressed against
     # the catapult's base plate
     def retract(self, percentage):
+        # Only allow percentages within the safety span
+        if percentage < 0 or percentage > 100:
+            return
+
         self.safe = False
 
         # Start drawing the arm back without waiting for it to complete
-        # The time to retract the entire span of the arm is 55 seconds
-        self.base_motor.run_time(9000, 55 * 1000 * (percentage / 100), True)
+        self.base_motor.run_time(9000, self.time_to_retract * 1000 * (percentage / 100), True)
         while True:
             if self.base_motor.stalled() or self.base_motor.speed() == 0:
                 self.base_motor.stop()
